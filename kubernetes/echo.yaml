@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: echo
+  labels:
+    app: echo
+    service: echo-srv
+spec:
+  selector:
+    matchLabels:
+      app: echo
+      service: echo-srv
+  template:
+    metadata:
+      labels:
+        app: echo
+        service: echo-srv
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: echoservice
+          image: francescoforestiphoopsit/echoservice:0.0.1-SNAPSHOT-20191106000759
+          command: ["java"]
+          args: ["-XX:+UseSerialGC", "-Xss512k", "-XX:MaxRAM=72m", "-Dserver.port=8080", "-Dserver.servlet.context-path=/echo", "-jar", "/app.jar"]
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: {}
+  labels:
+    app: echo
+    service: echo-srv
+  name: echo-srv
+  namespace: default
+spec:
+  ports:
+    - name: port
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: echo
+    service: echo-srv
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: "/echo"
+  name: echo-ingress
+  namespace: default
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: echo-srv
+              servicePort: 8080
+            path: "/echo"
