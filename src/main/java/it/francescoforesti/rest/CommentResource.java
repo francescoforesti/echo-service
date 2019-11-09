@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping(path = "comments")
@@ -27,6 +26,13 @@ public class CommentResource {
     @GetMapping(produces = "application/json")
     public List<String> findAll() {
         return new ArrayList<>(comments);
+    }
+
+    @DeleteMapping(path = "{comment}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@PathVariable("comment") String comment) {
+        comments.remove(comment);
+        reportsByComment.remove(comment);
     }
 
     @PutMapping(path = "{comment}/report")
