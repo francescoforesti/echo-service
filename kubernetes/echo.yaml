@@ -21,7 +21,7 @@ spec:
         - name: regcred
       containers:
         - name: echoservice
-          image: francescoforestiphoopsit/echoservice:0.0.1-SNAPSHOT-20191106000759
+          image: francescoforestiphoopsit/echoservice:0.0.1-SNAPSHOT-20191109124315
           command: ["java"]
           args: ["-XX:+UseSerialGC", "-Xss512k", "-XX:MaxRAM=72m", "-Dserver.port=8080", "-Dserver.servlet.context-path=/echo", "-jar", "/app.jar"]
   replicas: 1
